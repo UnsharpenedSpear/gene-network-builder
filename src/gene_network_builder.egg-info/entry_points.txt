@@ -1,0 +1,2 @@
+[console_scripts]
+gene-network = gene_network.cli:main
