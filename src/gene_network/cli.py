@@ -1,10 +1,9 @@
 import argparse
-from gene_network.io import return_edge_list
-from gene_network.io import write_graphml
+from gene_network.io import return_edge_list, write_graphml
 from gene_network.builder import build_graph_from_edges
 from gene_network.annotate import annotate_graph_with_degree
 
-def parse_args():
+def parse_args(argv=None):
     parser = argparse.ArgumentParser(description="Gene Network Builder CLI")
     parser.add_argument(
         "--input",
@@ -18,7 +17,7 @@ def parse_args():
         required=True,
         help="Path to save the output annotated graph.",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def main(argv=None):

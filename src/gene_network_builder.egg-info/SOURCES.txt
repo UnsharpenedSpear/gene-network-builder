@@ -12,4 +12,5 @@ src/gene_network_builder.egg-info/entry_points.txt
 src/gene_network_builder.egg-info/requires.txt
 src/gene_network_builder.egg-info/top_level.txt
 tests/test_builder.py
+tests/test_cli.py
 tests/test_io.py
