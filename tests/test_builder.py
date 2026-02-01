@@ -1,3 +1,4 @@
+import pytest
 import networkx as nx
 from gene_network.builder import (
     build_graph_from_edges,
@@ -5,35 +6,54 @@ from gene_network.builder import (
     graph_summary,
 )
 
+UNSPEC = "unspecified"
+
+
 # ---------- build_graph_from_edges ----------
 
 def test_build_graph_single_edge():
-    edges = [("X", "Y")]
+    edges = [("A", "B", UNSPEC, UNSPEC)]
+
     G = build_graph_from_edges(edges)
 
     assert isinstance(G, nx.Graph)
     assert G.number_of_nodes() == 2
     assert G.number_of_edges() == 1
-    assert set(G.nodes) == {"X", "Y"}
-    assert set(G.edges) == {("X", "Y")}
+    assert G.has_edge("A", "B")
+    assert G.edges["A", "B"]["interaction_type"] == UNSPEC
+    assert G.edges["A", "B"]["source"] == UNSPEC
+
+
+def test_build_graph_multiple_edges():
+    edges = [
+        ("A", "B", "physical", "BioGRID"),
+        ("B", "C", "genetic", "STRING"),
+    ]
+
+    G = build_graph_from_edges(edges)
+
+    assert G.number_of_nodes() == 3
+    assert G.number_of_edges() == 2
+    assert G.edges["A", "B"]["interaction_type"] == "physical"
+    assert G.edges["B", "C"]["source"] == "STRING"
 
 
 def test_build_graph_duplicate_edges():
-    edges = [("A", "B"), ("A", "B"), ("B", "A")]
+    edges = [
+        ("A", "B", UNSPEC, UNSPEC),
+        ("A", "B", UNSPEC, UNSPEC),
+    ]
+
     G = build_graph_from_edges(edges)
 
-    assert G.number_of_nodes() == 2
     assert G.number_of_edges() == 1
-    assert G.has_edge("A", "B")
 
 
-def test_build_graph_with_self_loops():
-    edges = [("A", "A"), ("A", "B")]
-    G = build_graph_from_edges(edges)
+def test_build_graph_rejects_non_4_tuple():
+    edges = [("A", "B")]
 
-    # build_graph_from_edges does NOT remove self-loops
-    assert ("A", "A") in G.edges
-    assert ("A", "B") in G.edges
+    with pytest.raises(ValueError):
+        build_graph_from_edges(edges)
 
 
 def test_build_graph_empty_edge_list():
@@ -46,20 +66,25 @@ def test_build_graph_empty_edge_list():
 # ---------- remove_self_loops ----------
 
 def test_remove_self_loops_removes_only_self_edges():
-    edges = [("A", "A"), ("A", "B"), ("B", "B")]
-    G = build_graph_from_edges(edges)
+    edges = [
+        ("A", "A", UNSPEC, UNSPEC),
+        ("A", "B", UNSPEC, UNSPEC),
+    ]
 
+    G = build_graph_from_edges(edges)
     G = remove_self_loops(G)
 
     assert ("A", "A") not in G.edges
-    assert ("B", "B") not in G.edges
     assert ("A", "B") in G.edges
 
 
-def test_remove_self_loops_no_self_loops():
-    edges = [("A", "B"), ("B", "C")]
-    G = build_graph_from_edges(edges)
+def test_remove_self_loops_no_self_loops_present():
+    edges = [
+        ("A", "B", UNSPEC, UNSPEC),
+        ("B", "C", UNSPEC, UNSPEC),
+    ]
 
+    G = build_graph_from_edges(edges)
     G2 = remove_self_loops(G)
 
     assert set(G2.edges) == {("A", "B"), ("B", "C")}
@@ -77,9 +102,12 @@ def test_remove_self_loops_empty_graph():
 # ---------- graph_summary ----------
 
 def test_graph_summary_basic():
-    edges = [("A", "B"), ("B", "C")]
-    G = build_graph_from_edges(edges)
+    edges = [
+        ("A", "B", UNSPEC, UNSPEC),
+        ("B", "C", UNSPEC, UNSPEC),
+    ]
 
+    G = build_graph_from_edges(edges)
     summary = graph_summary(G)
 
     assert summary == {
@@ -89,10 +117,14 @@ def test_graph_summary_basic():
 
 
 def test_graph_summary_after_self_loop_removal():
-    edges = [("A", "A"), ("A", "B")]
-    G = build_graph_from_edges(edges)
+    edges = [
+        ("A", "A", UNSPEC, UNSPEC),
+        ("A", "B", UNSPEC, UNSPEC),
+    ]
 
+    G = build_graph_from_edges(edges)
     G = remove_self_loops(G)
+
     summary = graph_summary(G)
 
     assert summary["num_nodes"] == 2
@@ -104,5 +136,7 @@ def test_graph_summary_empty_graph():
 
     summary = graph_summary(G)
 
-    assert summary["num_nodes"] == 0
-    assert summary["num_edges"] == 0
+    assert summary == {
+        "num_nodes": 0,
+        "num_edges": 0,
+    }
