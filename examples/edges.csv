@@ -1,6 +1,21 @@
-# Example gene interactions
-TP53,BRCA1
-BRCA1,RAD51
-
-TP53,MDM2
-    
+# Source: BioGRID (https://thebiogrid.org)
+# Query gene: TP53
+# Interaction type derived from BioGRID Experimental System Type = Physical
+# Organism: Homo sapiens
+#geneA,geneB,interaction_type,source
+TP53,USP7,physical,BioGRID
+TP53,MAP9,physical,BioGRID
+TP53,MDM2,physical,BioGRID
+TP53,ATF3,physical,BioGRID
+TP53,MAPK14,physical,BioGRID
+TP53,EAF2,physical,BioGRID
+TP53,ZBTB7A,physical,BioGRID
+TP53,QRWD1,physical,BioGRID
+TP53,RPL11,physical,BioGRID
+TP53,PRDM2,physical,BioGRID
+TP53,RNF2,physical,BioGRID
+TP53,UBR7,physical,BioGRID
+TP53,BRCA1,physical,BioGRID
+TP53,ATM,physical,BioGRID
+TP53,ATR,physical,BioGRID
+TP53,BRCA2,physical,BioGRID
