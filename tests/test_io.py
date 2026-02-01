@@ -6,7 +6,7 @@ from gene_network.io import read_edge_list
 
 def test_read_csv_basic(tmp_path):
     f = tmp_path / "edges.csv"
-    f.write_text("A,B\nC,D\n")
+    f.write_text("a,b\nc,d\n")
 
     edges = read_edge_list(f)
 
@@ -18,7 +18,7 @@ def test_csv_ignores_comments_and_blank_lines(tmp_path):
     f.write_text(
         "# comment\n"
         "\n"
-        "A,B\n"
+        "a,b\n"
     )
 
     edges = read_edge_list(f)
@@ -26,9 +26,9 @@ def test_csv_ignores_comments_and_blank_lines(tmp_path):
     assert edges == [("A", "B")]
 
 
-def test_csv_strips_whitespace(tmp_path):
+def test_csv_strips_whitespace_and_uppercases(tmp_path):
     f = tmp_path / "edges.csv"
-    f.write_text("  A  ,  B  \n")
+    f.write_text("  a  ,  b  \n")
 
     edges = read_edge_list(f)
 
@@ -37,7 +37,7 @@ def test_csv_strips_whitespace(tmp_path):
 
 def test_csv_invalid_format_raises(tmp_path):
     f = tmp_path / "edges.csv"
-    f.write_text("A,B,C\n")
+    f.write_text("a,b,c\n")
 
     with pytest.raises(ValueError):
         read_edge_list(f)
@@ -47,7 +47,7 @@ def test_csv_invalid_format_raises(tmp_path):
 
 def test_read_tsv_basic(tmp_path):
     f = tmp_path / "edges.tsv"
-    f.write_text("A\tB\nC\tD\n")
+    f.write_text("a\tb\nc\td\n")
 
     edges = read_edge_list(f)
 
@@ -56,7 +56,7 @@ def test_read_tsv_basic(tmp_path):
 
 def test_tsv_invalid_format_raises(tmp_path):
     f = tmp_path / "edges.tsv"
-    f.write_text("A\tB\tC\n")
+    f.write_text("a\tb\tc\n")
 
     with pytest.raises(ValueError):
         read_edge_list(f)
@@ -74,18 +74,17 @@ def test_empty_file_returns_empty_list(tmp_path):
 
 
 def test_comment_only_file_returns_empty_list(tmp_path):
-    f = tmp_path / "edges.csv"
-    f.write_text("# only comments\n# another\n")
+    f = tmp_path / "edges.tsv"
+    f.write_text("# comment\n# another\n")
 
     edges = read_edge_list(f)
 
     assert edges == []
 
 
-def test_unknown_extension_raises(tmp_path):
+def test_unsupported_filetype_raises(tmp_path):
     f = tmp_path / "edges.txt"
-    f.write_text("A,B\n")
+    f.write_text("a,b\n")
 
     with pytest.raises(ValueError):
         read_edge_list(f)
-
