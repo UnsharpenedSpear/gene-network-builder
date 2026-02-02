@@ -30,10 +30,10 @@ BRCA1 RAD51
 
 ### Annotated format (recommended)
 
-geneA geneB interaction_type source
-TP53 BRCA1 physical BioGRID
-TP53 MDM2 regulatory Reactome
-BRCA1 RAD51 pathway KEGG
+- geneA geneB interaction_type source
+- TP53 BRCA1 physical BioGRID
+- TP53 MDM2 regulatory Reactome
+- BRCA1 RAD51 pathway KEGG
 
 ### Notes
 - `interaction_type` is optional (default: `unspecified`)
