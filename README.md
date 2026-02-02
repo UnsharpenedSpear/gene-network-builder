@@ -24,13 +24,11 @@ The primary input is a tab- or comma-separated edge list.
 
 ### Minimal format
 
-geneA geneB
-TP53 BRCA1
-BRCA1 RAD51
+- TP53 BRCA1
+- BRCA1 RAD51
 
 ### Annotated format (recommended)
 
-- geneA geneB interaction_type source
 - TP53 BRCA1 physical BioGRID
 - TP53 MDM2 regulatory Reactome
 - BRCA1 RAD51 pathway KEGG
@@ -39,7 +37,7 @@ BRCA1 RAD51
 - `interaction_type` is optional (default: `unspecified`)
 - `source` is optional but strongly encouraged
 - Gene symbols are normalized by trimming whitespace and uppercasing
-- Self-edges are ignored
+- Self-edges are removed post addition
 
 ---
 
@@ -60,10 +58,9 @@ BRCA1 RAD51
 - evidence sources
 - node degree
 
-## Biological Assumptions & Limitations
+## Assumptions & Limitations
 
 This tool makes several explicit assumptions:
-- Edges represent hypotheses supported by evidence, not absolute biological truth
 - Interaction types are user-provided and not inferred
 - Gene identifier normalization is minimal (no alias resolution)
 - The network is undirected by design for simplicity
